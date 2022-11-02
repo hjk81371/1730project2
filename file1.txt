@@ -1,0 +1,7 @@
+This is the first line in file1.txt
+this is second
+this is third
+this is fourth
+this is fifth
+this is sixth
+this is the last lime

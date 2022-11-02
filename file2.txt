@@ -1,0 +1,7 @@
+first line of file2.txt
+second line
+third line
+this is fourth line
+this is fifthj line
+this is 6th line
+last line of file2.txt
