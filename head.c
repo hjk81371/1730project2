@@ -6,36 +6,50 @@
 
 void outc(int bytes, int fd);
 void outn(int lines, int fd);
+void st_out();
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        // case for no command line arguments
+        st_out();
     } else {
         for (int i = 1; i < argc; i++) {
             if (strcmp(argv[i], "-c") == 0) {
                 int bytes = atoi(argv[i + 1]);
                 for (int j = i + 1; j < argc; j++) {
-                    int fd = open(argv[j], O_RDONLY, 0777);
-                    if (fd > 0) {
-                        outc(bytes, fd);
+                    if (strcmp(argv[j], "-") == 0) {
+                        st_out();
+                    } else {
+                        int fd = open(argv[j], O_RDONLY, 0777);
+                        if (fd > 0) {
+                            outc(bytes, fd);
+                        } // if
                     } // if
                 } // for
                 break;
             } else if (strcmp(argv[i], "-n") == 0) {
                 int lines = atoi(argv[i + 1]);
-                for (int j = i + 1; j < argc; j++) {
-                    int fd = open(argv[j], O_RDONLY, 0777);
-                    if (fd > 0) {
-                        outn(lines, fd);
+                for (int j = i; j < argc; j++) {
+                    if (strcmp(argv[j], "-") == 0) {
+                        st_out();
+                    } else {
+                        int fd = open(argv[j], O_RDONLY, 0777);
+                        if (fd > 0) {
+                            outn(lines, fd);
+                        } // if
                     } // if
                 } // for
                 break;
             } else {
-                    int fd = open(argv[i], O_RDONLY, 0777);
-                    if (fd > 0) {
-                        int length = lseek(fd, 0, SEEK_END);
-                        outc(length, fd);
+                for (int j = i; j < argc; j++) {
+                    if (strcmp(argv[j], "-") == 0) {
+                        st_out();
+                    } else {
+                        int fd = open(argv[j], O_RDONLY, 0777);
+                        if (fd > 0) {
+                            outc(10, fd);
+                        } // if
                     } // if
+                } // for
             } // if
             break;
         } // for
@@ -69,3 +83,12 @@ void outn(int lines, int fd) {
     buf[bytes] = '\n';
     write(STDOUT_FILENO, buf, bytes + 1);
 } // outn
+
+void st_out() {
+    char buf[256];
+    int length = 1;
+    while (length > 0) {
+        length = read(STDIN_FILENO, buf, 256);
+        write(STDOUT_FILENO, buf, length);
+    } // while
+} // std_out

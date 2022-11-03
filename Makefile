@@ -1,6 +1,6 @@
 compile:
-	gcc -Wall -pedantic-errors -o head head.c
+	gcc -Wall -pedantic-errors -o wc wc.c
 run: compile
-	./head -n 4 file1.txt file2.txt
+	./wc file1.txt
 clean:
-	rm head
+	rm wc
