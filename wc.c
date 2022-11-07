@@ -92,35 +92,38 @@ void stdio(int c, int w, int l, int noarg, int * lineptr, int * wordptr, int * b
     int linecount = 0;
     int wordcount = 0;
     int bytecount = 0;
+
+    *wordptr /= 2;
+
     while (length > 0) {
-        length = read(STDIN_FILENO, buf, 500);
+        length = read(STDIN_FILENO, buf, 512);
+        if (length <= 0) break;
         bytecount += length;
         *byteptr += length;
+
+        for (int i = 0; i < length; i++) {
+            if (buf[i] == '\n') {
+                linecount++;
+                *lineptr += 1;
+                wordcount++;
+                *wordptr += 1;
+            } else if (buf[i] == ' ') {
+                wordcount++;
+                *wordptr += 1;
+            } // if
+        } // for
     } // while
-    for (int i = 0; i < 512; i++) {
-        if (buf[i] == '\n') {
-            linecount++;
-            wordcount++;
-            *lineptr += 1;
-            *wordptr += 1;
-        } else if (buf[i] == ' ') {
-            wordcount++;
-//            *wordptr += 1;
-        } // if
-    } // for
+
     int line_length = 0;
     int word_length = 0;
     int byte_length = 0;
-
     int * linelengthptr = &line_length;
     int * wordlengthptr = &word_length;
     int * bytelengthptr = &byte_length;
-
     char * line = to_char_array(linecount, linelengthptr);
     char * word = to_char_array(wordcount, wordlengthptr);
     char * byte = to_char_array(bytecount, bytelengthptr);
-
-    char dspace = ' ';
+    char dspace = 9;
     char nwln = '\n';
 
        if (noarg) {
@@ -190,9 +193,10 @@ void stdio(int c, int w, int l, int noarg, int * lineptr, int * wordptr, int * b
         for (int i = 0; i < word_length; i++) {
             write(STDOUT_FILENO, (word + i), sizeof(char));
         }  //for
-        printf("HERE\n");
         write(STDOUT_FILENO, &dspace, 1);
     } // if
+       char dash = '-';
+       write(STDOUT_FILENO, &dash, 1);
        write(STDOUT_FILENO, &nwln, 1);
 
 } // stdio
@@ -206,14 +210,15 @@ void total(int c, int l, int w, int noarg, int * total_lines, int * total_words,
     int * wordptr = &word_length;
     int * byteptr = &byte_length;
 
-    word_length /= 2;
+//    int temp = ceil(*total_words / 2) + 1;
+//    total_words = &temp;
 
     char* line = to_char_array(*total_lines, lineptr);
     char* word = to_char_array(*total_words, wordptr);
     char* byte = to_char_array(*total_bytes, byteptr);
 
     char total[] = "total";
-    char dspace = ' ';
+    char dspace = 9;
     char nwln = '\n';
 
 
@@ -304,7 +309,7 @@ void std_out(int fd, int c, int l, int w, int noarg, int * lineptr, int * wordpt
     char* byte = to_char_array(bytes(fd, byteptr), bytptr);
     char* line = to_char_array(newlines(fd, '\n', lineptr), linptr);
     char* word = to_char_array(words(fd, wordptr), wrdptr);
-    char dspace = ' ';
+    char dspace = 9;
 
     if (noarg) {
         for (int i = 0; i < line_length; i++) {
@@ -407,15 +412,14 @@ int words(int fd, int * total_words) {
 } // words
 
 
-char * to_char_array(int num, int * arr_length)
-{
+char * to_char_array(int num, int * arr_length) {
     int counter = log10(num) + 1;
+    if (counter < 1) counter = 1;
     *arr_length = counter;
     int i;
     char* array = calloc(counter, sizeof(char));
-    for (i = counter-1; i >= 0; --i, num /= 10)
-    {
+    for (i = counter-1; i >= 0; --i, num /= 10) {
         array[i] = (num % 10) + '0';
-    }
+    } // for
     return array;
-}
+} // to_char_array
