@@ -90,6 +90,7 @@ void outn(int lines, int fd) {
 
 void st_out(int c, int bytes) {
     int fd = creat("log", 0777);
+    printf("fd: %d\n", fd);
     char buf[256];
     int length = 1;
     while (length > 0) {
@@ -97,9 +98,10 @@ void st_out(int c, int bytes) {
         write(fd, buf, length);
     } // while
     if (c) {
-        outc(bytes, fd);
+        outc(bytes, -1);
     } else {
-        outn(bytes, fd);
+        printf("n\n");
+        outn(bytes, -1);
     } // if
-    remove("log");
+//    remove("log");
 } // std_out
