@@ -6,11 +6,11 @@
 
 void outc(int bytes, int fd);
 void outn(int lines, int fd);
-void st_out();
+void st_out(int c, int bytes);
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        st_out();
+        st_out(0, 10);
     } else {
         for (int i = 1; i < argc; i++) {
             if (strcmp(argv[i], "-c") == 0) {
@@ -61,13 +61,13 @@ void outc(int bytes, int fd) {
     char buf[end];
     char nwln = '\n';
     lseek(fd, (end - bytes), SEEK_SET);
-    read(fd, buf, end - bytes);
-    write(STDOUT_FILENO, buf, bytes + 1);
+    read(fd, buf, (end - bytes));
+    write(STDOUT_FILENO, buf, (bytes + 1));
     write(STDOUT_FILENO, &nwln, 1);
 } // outc
 
 void outn(int lines, int fd) {
-    int index = 1;
+    int index = 0;
     int bytes = 0;
     int end = lseek(fd, 0, SEEK_END);
     char* buf = calloc(end, sizeof(char));
@@ -83,8 +83,9 @@ void outn(int lines, int fd) {
         bytes++;
     } // for
     lseek(fd, (-1*bytes), SEEK_END);
-    buf[bytes] = '\n';
-    write(STDOUT_FILENO, buf, bytes + 1);
+    read(fd, buf, bytes);
+//    buf[end] = '\n';
+    write(STDOUT_FILENO, buf, bytes - 1);
 } // outn
 
 void st_out(int c, int bytes) {
@@ -100,4 +101,5 @@ void st_out(int c, int bytes) {
     } else {
         outn(bytes, fd);
     } // if
+    remove("log");
 } // std_out
