@@ -4,6 +4,6 @@
 
 int main(int argc, char * argv[], char * env[]) {
     for (int i = 0; env[i] != NULL; i++) {
-        write(STDOUT_FILENO, *env, 1000);
+        printf("%s\n", env[i]);
     } // for
 } // main

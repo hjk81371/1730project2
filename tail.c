@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
             } else {
                 for (int j = i; j < argc; j++) {
                     if (strcmp(argv[j], "-") == 0) {
-                        st_out(1, 10);
+                        st_out(0, 10);
                     } else {
                         int fd = open(argv[j], O_RDONLY, 0777);
                         if (fd > 0) {
@@ -89,7 +89,7 @@ void outn(int lines, int fd) {
 } // outn
 
 void st_out(int c, int bytes) {
-    int fd = creat("log", 0777);
+    int fd = open("log", O_RDWR | O_CREAT, 0777);
     printf("fd: %d\n", fd);
     char buf[256];
     int length = 1;
@@ -98,10 +98,10 @@ void st_out(int c, int bytes) {
         write(fd, buf, length);
     } // while
     if (c) {
-        outc(bytes, -1);
+        outc(bytes, fd);
     } else {
         printf("n\n");
-        outn(bytes, -1);
+        outn(bytes, fd);
     } // if
-//    remove("log");
+    remove("log");
 } // std_out

@@ -14,9 +14,9 @@ int words(int fd, int * total_words);
 char * to_char_array(int num, int * arr_length);
 
 int main(int argc, char* argv[]) {
-    int c;
-    int l;
-    int w;
+    int c = 0;
+    int l = 0;
+    int w = 0;
     int noarg = 1;
     int files = 0;
 
@@ -93,7 +93,7 @@ void stdio(int c, int w, int l, int noarg, int * lineptr, int * wordptr, int * b
     int wordcount = 0;
     int bytecount = 0;
 
-    *wordptr /= 2;
+//    *wordptr /= 2;
 
     while (length > 0) {
         length = read(STDIN_FILENO, buf, 512);
@@ -210,8 +210,8 @@ void total(int c, int l, int w, int noarg, int * total_lines, int * total_words,
     int * wordptr = &word_length;
     int * byteptr = &byte_length;
 
-//    int temp = ceil(*total_words / 2) + 1;
-//    total_words = &temp;
+    int temp = ceil(*total_words / 2);
+    total_words = &temp;
 
     char* line = to_char_array(*total_lines, lineptr);
     char* word = to_char_array(*total_words, wordptr);
