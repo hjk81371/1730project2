@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
                     } else {
                         int fd = open(argv[j], O_RDONLY, 0777);
                         if (fd > 0) {
-                            outc(10, fd);
+                            outn(10, fd);
                         } // if
                     } // if
                 } // for
@@ -69,6 +69,7 @@ void outc(int bytes, int fd) {
 void outn(int lines, int fd) {
     int index = 0;
     int bytes = 0;
+    char nwln = '\n';
     int end = lseek(fd, 0, SEEK_END);
     char* buf = calloc(end, sizeof(char));
     lseek(fd, 0, SEEK_SET);
@@ -84,13 +85,12 @@ void outn(int lines, int fd) {
     } // for
     lseek(fd, (-1*bytes), SEEK_END);
     read(fd, buf, bytes);
-//    buf[end] = '\n';
     write(STDOUT_FILENO, buf, bytes - 1);
+    write(STDOUT_FILENO, &nwln, 1);
 } // outn
 
 void st_out(int c, int bytes) {
     int fd = open("log", O_RDWR | O_CREAT, 0777);
-    printf("fd: %d\n", fd);
     char buf[256];
     int length = 1;
     while (length > 0) {
@@ -100,7 +100,6 @@ void st_out(int c, int bytes) {
     if (c) {
         outc(bytes, fd);
     } else {
-        printf("n\n");
         outn(bytes, fd);
     } // if
     remove("log");
